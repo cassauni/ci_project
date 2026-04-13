@@ -30,3 +30,19 @@ jobs:
         run: |
           source venv/bin/activate
           pytest
+          
+      - name: Send Telegram Notification
+        if: failure()
+        uses: cbrgm/telegram-github-action@v1
+        with:
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          parse-mode: ""
+          disable-web-page-preview: true
+          message: |
+            При прохождении пайплайна возникла ошибка
+            Репозиторий: ${{ github.repository }}
+            Ветка: ${{ github.ref_name }}
+            Версия Python: ${{ matrix.python-version }}
+            Автор: ${{ github.actor }}
+            Посмотреть лог: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
